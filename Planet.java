@@ -22,7 +22,7 @@ public class Planet extends Entity {
 	}
 	public int numMoons() {return moons.size();}
 	
-	public Integer fuelToOrbit(Entity entity, int techlevel, int payload) {
+	public Cost fuelToOrbit(Entity entity, int techlevel, int payload) {
 		int majororbitdist;
 		int atmocost = super.atmosphereThickness();
 		if (super.hasAtmosphere() && techlevel == 4)
@@ -45,10 +45,10 @@ public class Planet extends Entity {
 			if (stagecount == Config.tankcostperstage.length && i<totaltankcost)
 				return null;
 		}
-		return fuelcost;
+		return new Cost(totaltankcost, fuelcost);
 	}
 	
-	public Integer fuelToLand(Entity entity, int techlevel, int payload) {
+	public Cost fuelToLand(Entity entity, int techlevel, int payload) {
 		int majororbitdist;
 		int atmocost = super.atmosphereThickness();
 		if (super.hasAtmosphere() && techlevel == 4)
@@ -75,10 +75,10 @@ public class Planet extends Entity {
 			if (stagecount == Config.tankcostperstage.length && i<totaltankcost)
 				return null;
 		}
-		return fuelcost;
+		return new Cost(totaltankcost, fuelcost);
 	}
 	
-	public Integer fuelRoundTrip(Entity entity, int techlevel, int payload) {
+	public Cost fuelRoundTrip(Entity entity, int techlevel, int payload) {
 		int majororbitdist;
 		int atmocost = super.atmosphereThickness() + entity.atmosphereThickness();
 		if (super.hasAtmosphere() && techlevel == 4)
@@ -109,7 +109,7 @@ public class Planet extends Entity {
 			if (stagecount == Config.tankcostperstage.length && i<totaltankcost)
 				return null;
 		}
-		return fuelcost;
+		return new Cost(totaltankcost, fuelcost);
 	}
 	
 	public int distanceTo(Entity entity) {
