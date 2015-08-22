@@ -7,17 +7,17 @@ public class Config {
 		3
 	};
 	public final static Integer[] tanksperstage = {
-		2,
-		3,
-		4,
-		4
+		//2,
+		3
+		//4,
+		//4
 	};
 	
 	public final static Planet[] planets = {
 		new Planet("Kerbol", 0, 0, false),
 		new Planet("Moho", 1, 0, true),
-		new Planet("Eve", 2, 3, true),
-		new Planet("Kerbin", 3, 2, true),
+		new Planet("Eve", 2, 2, true),
+		new Planet("Kerbin", 3, 1, true),
 		new Planet("Duna", 4, 1, true),
 		new Planet("Dres", 5, 0, true),
 		new Planet("Jool", 6, 0, false),
@@ -35,4 +35,5 @@ public class Config {
 		new Moon("Bop", planets[6], 4, 0),
 		new Moon("Pol", planets[6], 5, 0)
 	};
+	
 }
