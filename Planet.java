@@ -113,6 +113,13 @@ public class Planet extends Entity {
 	}
 	
 	public int distanceTo(Entity entity) {
+		DistData data = getDistanceData(entity);
+		return data.majorDist() + data.minorDist();
+	}
+	
+	public DistData getDistanceData(Entity entity) {
+		if (entity.equals(this))
+			return new DistData(0, 0, 0);
 		int start = super.getPosition();
 		int majororbitdist;
 		int entrydist;
@@ -135,7 +142,6 @@ public class Planet extends Entity {
 			}
 		}
 	
-		//System.out.println("MOD: " + majororbitdist + "\nESCD: " + escapedist + "\nENTD: " + entrydist);
-		return majororbitdist + escapedist + entrydist;
+		return new DistData(majororbitdist, escapedist, entrydist);
 	}
 }

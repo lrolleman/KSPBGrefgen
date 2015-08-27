@@ -1,5 +1,6 @@
 import java.io.BufferedOutputStream;
 import java.io.BufferedWriter;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -26,11 +27,14 @@ public class ReferenceGen {
 				writeRaw(args[i+1]);
 				i++;
 				break;
+			case "-cc":
+				printContracts();
+				break;
 			}
 		}
 	}
 	
-	private static void writeRaw(String filename) {
+	private static void writeRaw(String filename) throws FileNotFoundException {
 		PrintStream ps = System.out;
 		FileOutputStream fos = new FileOutputStream(filename);
 		System.setOut(new PrintStream(new BufferedOutputStream(fos), true));
@@ -45,8 +49,14 @@ public class ReferenceGen {
 		printCSV();
 		System.setOut(ps);
 	}
+	
+	private static void printContracts() {
+		for (ContractCard cc : Config.contractcards)
+			System.out.println(cc.toString());
+	}
 
 	private static void printCSV() {
+		System.out.println("1 Payload");
 		System.out.print("Destination");
 		for (Integer i : Config.tanksperstage) 
 			System.out.print(",Fuel to orbit at " + i + " tank per stage (number of tanks),Turns to complete");
@@ -64,17 +74,29 @@ public class ReferenceGen {
 				int otimetocomplete = (int) Math.ceil(((double) Config.planets[3].distanceTo(planet)+1)/Config.MPT);
 				int ltimetocomplete = (int) Math.ceil(((double) Config.planets[3].distanceTo(planet)+2)/Config.MPT);
 				int rtimetocomplete = (int) Math.ceil(((double) Config.planets[3].distanceTo(planet)*2+4)/Config.MPT);
-				if (planet.equals(Config.planets[3]))
+				if (planet.equals(Config.planets[3])) {
 					otimetocomplete = 1;
-				System.out.print("," + occost.fuelCost() + " (" + occost.tankCost() + ")," + otimetocomplete);
+					ltimetocomplete = 1;
+					rtimetocomplete = 2;
+				}
+				if (occost != null)
+					System.out.print("," + occost.fuelCost() + " (" + occost.tankCost() + ")," + otimetocomplete); 
+				else if (planet.equals(Config.planets[0]) || planet.equals(Config.planets[6]))
+					System.out.print(",Impossible,Impossible");
+				else
+					System.out.print(",Requires refuel,variable");
 				if (lccost != null)
 					System.out.print("," + lccost.fuelCost() + " (" + lccost.tankCost() + ")," + ltimetocomplete); 
-				else
+				else if (planet.equals(Config.planets[0]) || planet.equals(Config.planets[6]))
 					System.out.print(",Impossible,Impossible");
+				else
+					System.out.print(",Requires refuel,variable");
 				if (rccost != null)
 					System.out.println("," + rccost.fuelCost() + " (" + rccost.tankCost() + ")," + rtimetocomplete);
-				else
+				else if (planet.equals(Config.planets[0]) || planet.equals(Config.planets[6]))
 					System.out.println(",Impossible,Impossible");
+				else
+					System.out.println(",Requires refuel,variable");
 			}
 		}
 		for (Moon moon : Config.moons) {
@@ -86,15 +108,87 @@ public class ReferenceGen {
 				int otimetocomplete = (int) Math.ceil(((double) Config.planets[3].distanceTo(moon)+1)/Config.MPT);
 				int ltimetocomplete = (int) Math.ceil(((double) Config.planets[3].distanceTo(moon)+2)/Config.MPT);
 				int rtimetocomplete = (int) Math.ceil(((double) Config.planets[3].distanceTo(moon)*2+4)/Config.MPT);
-				System.out.print("," + occost.fuelCost() + " (" + occost.tankCost() + ")," + otimetocomplete);
+				
+				if (occost != null)
+					System.out.print("," + occost.fuelCost() + " (" + occost.tankCost() + ")," + otimetocomplete);
+				else
+					System.out.println(",Requires refuel,variable");
 				if (lccost != null)
 					System.out.print("," + lccost.fuelCost() + " (" + lccost.tankCost() + ")," + ltimetocomplete); 
 				else
-					System.out.print(",Impossible,Impossible");
+					System.out.print(",Requires refuel,variable");
 				if (rccost != null)
 					System.out.println("," + rccost.fuelCost() + " (" + rccost.tankCost() + ")," + rtimetocomplete);
 				else
+					System.out.println(",Requires refuel,variable");
+			}
+		}
+		System.out.println();
+		System.out.println("2 Payload");
+		System.out.print("Destination");
+		for (Integer i : Config.tanksperstage) 
+			System.out.print(",Fuel to orbit at " + i + " tank per stage (number of tanks),Turns to complete");
+		for (Integer i : Config.tanksperstage) 
+			System.out.print(",Fuel to land at " + i + " tank per stage (number of tanks),Turns to complete");
+		for (Integer i : Config.tanksperstage) 
+			System.out.print(",Fuel to land and return at " + i + " tank per stage (number of tanks),Turns to complete");
+		System.out.println();
+		for (Planet planet : Config.planets) {
+			System.out.print(planet.getName());
+			for (int i=1; i<=Config.tanksperstage.length; i++) {
+				Cost occost = Config.planets[3].fuelToOrbit(planet, i, 2);
+				Cost lccost = Config.planets[3].fuelToLand(planet, i, 2);
+				Cost rccost = Config.planets[3].fuelRoundTrip(planet, i, 2);
+				int otimetocomplete = (int) Math.ceil(((double) Config.planets[3].distanceTo(planet)+1)/Config.MPT);
+				int ltimetocomplete = (int) Math.ceil(((double) Config.planets[3].distanceTo(planet)+2)/Config.MPT);
+				int rtimetocomplete = (int) Math.ceil(((double) Config.planets[3].distanceTo(planet)*2+4)/Config.MPT);
+				if (planet.equals(Config.planets[3])) {
+					otimetocomplete = 1;
+					ltimetocomplete = 1;
+					rtimetocomplete = 2;
+				}
+				if (occost != null)
+					System.out.print("," + occost.fuelCost() + " (" + occost.tankCost() + ")," + otimetocomplete); 
+				else if (planet.equals(Config.planets[0]) || planet.equals(Config.planets[6]))
+					System.out.print(",Impossible,Impossible");
+				else
+					System.out.print(",Requires refuel,variable");
+				if (lccost != null)
+					System.out.print("," + lccost.fuelCost() + " (" + lccost.tankCost() + ")," + ltimetocomplete); 
+				else if (planet.equals(Config.planets[0]) || planet.equals(Config.planets[6]))
+					System.out.print(",Impossible,Impossible");
+				else
+					System.out.print(",Requires refuel,variable");
+				if (rccost != null)
+					System.out.println("," + rccost.fuelCost() + " (" + rccost.tankCost() + ")," + rtimetocomplete);
+				else if (planet.equals(Config.planets[0]) || planet.equals(Config.planets[6]))
 					System.out.println(",Impossible,Impossible");
+				else
+					System.out.println(",Requires refuel,variable");
+			}
+		}
+		for (Moon moon : Config.moons) {
+			System.out.print(moon.getName());
+			for (int i=1; i<=Config.tanksperstage.length; i++) {
+				Cost occost = Config.planets[3].fuelToOrbit(moon, i, 2);
+				Cost lccost = Config.planets[3].fuelToLand(moon, i, 2);
+				Cost rccost = Config.planets[3].fuelRoundTrip(moon, i, 2);
+				int otimetocomplete = (int) Math.ceil(((double) Config.planets[3].distanceTo(moon)+1)/Config.MPT);
+				int ltimetocomplete = (int) Math.ceil(((double) Config.planets[3].distanceTo(moon)+2)/Config.MPT);
+				int rtimetocomplete = (int) Math.ceil(((double) Config.planets[3].distanceTo(moon)*2+4)/Config.MPT);
+				
+				if (occost != null)
+					System.out.print("," + occost.fuelCost() + " (" + occost.tankCost() + ")," + otimetocomplete);
+				else
+					System.out.println(",Requires refuel,variable");
+				if (lccost != null)
+					System.out.print("," + lccost.fuelCost() + " (" + lccost.tankCost() + ")," + ltimetocomplete); 
+				else
+					System.out.print(",Requires refuel,variable");
+				if (rccost != null)
+					System.out.println("," + rccost.fuelCost() + " (" + rccost.tankCost() + ")," + rtimetocomplete);
+				else
+					System.out.println(",Requires refuel,variable");
 			}
 		}
 	}
