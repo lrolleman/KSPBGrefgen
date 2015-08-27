@@ -2,10 +2,12 @@
 public class Config {
 	public final static int MPT = 2;
 	public final static double contract_refuel_mult = 2.0;
+	public final static double contract_norefuel_mult = 1.0;
 	public final static double contract_science_balance = 0.5;
 	public final static double contract_fuel_balance = 0;
 	public final static double contract_funds_balance = 0.67;
 	public final static double contract_vp_balance = 0.33;
+	
 	public final static Integer[] tankcostperstage = {
 		1,
 		2,
@@ -167,7 +169,7 @@ public class Config {
 				"Perform an EVA on or around Laythe and return safely", 
 				moons[4], 
 				Constants.LOAD_LIGHT, 
-				Constants.MTYPE_ORBIT),
+				Constants.MTYPE_ORBITROUNDTRIP),
 		new ContractCard(
 				"Laythe Base",
 				"Establish a Base on the surface of Laythe", 

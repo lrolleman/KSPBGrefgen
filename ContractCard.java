@@ -31,6 +31,7 @@ public class ContractCard {
 							data.minorDist()/2) * Config.contract_refuel_mult);
 				} else {
 					ccscore = cost.fuelCost() + data.minorDist()/2;
+					ccscore = (int) (ccscore * Config.contract_norefuel_mult);
 				}
 				break;
 			} case Constants.MTYPE_LANDING: {
@@ -42,7 +43,8 @@ public class ContractCard {
 					if (!dest.hasAtmosphere())
 						ccscore += payload;
 				} else {
-					ccscore = cost.fuelCost() + data.minorDist()/2;
+					ccscore = cost.fuelCost() + data.minorDist()/2 + payload;
+					ccscore = (int) (ccscore * Config.contract_norefuel_mult);
 				}
 				break;
 			} case Constants.MTYPE_ROUNDTRIP: {
@@ -53,6 +55,7 @@ public class ContractCard {
 							data.minorDist()/2) * Config.contract_refuel_mult)*2;
 				} else {
 					ccscore = cost.fuelCost() + data.minorDist()/2 + 2*payload;
+					ccscore = (int) (ccscore * Config.contract_norefuel_mult);
 				}
 				break;
 			} case Constants.MTYPE_ORBITROUNDTRIP: {
@@ -63,6 +66,7 @@ public class ContractCard {
 							data.minorDist()/2) * Config.contract_refuel_mult);
 				} else {
 					ccscore = cost.fuelCost()*2 + data.minorDist()/2;
+					ccscore = (int) (ccscore * Config.contract_norefuel_mult);
 				}
 				break;
 			}
